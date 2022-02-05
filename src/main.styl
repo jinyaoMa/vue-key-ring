@@ -1,0 +1,38 @@
+$screen-phone-size = 540px
+$screen-tablet-size = 1024px
+
+:root
+  // dimension
+  --padding 64px
+  --padding-btn 8px
+  --margin-img 32px
+  --margin-gap 8px
+  --border-width 2px
+  --font-size-l 20px
+  --font-size 16px
+  --font-size-m 14px
+  --font-size-s 12px
+  --line-height-l 2
+  --line-height 1.5
+  --line-height-s 1.2
+  --line-height-none 1
+  @media (max-width $screen-tablet-size)
+    --padding 32px
+    --padding-btn 6px
+    --margin-img 24px
+    --margin-gap 6px
+  @media (max-width $screen-phone-size)
+    --padding 16px
+    --padding-btn 4px
+    --margin-img 16px
+    --margin-gap 4px
+  // color
+  --color-text #333333
+  --color-text-l #999999
+  --color-gray #f1f2f3
+  --color-bg #ffffff
+
+body
+  margin 0
+  overflow-x hidden
+  overflow-y scroll
