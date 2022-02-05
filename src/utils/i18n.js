@@ -10,6 +10,10 @@ export const messages = {
     version: "version {version}",
     intro:
       "A key ring application to store accounts and passwords. All operations are offline and stored data is encrypted.",
+    secret: "Key for Encryption",
+    search: "Enter keywords to filter...",
+    id: "ID",
+    account: "Account",
   },
   [ZH]: {
     appname: "耀匙扣",
@@ -19,5 +23,9 @@ export const messages = {
     version: "版本号 {version}",
     intro:
       "一款类似钥匙扣 APP 的小程序；辅助储存账号密码；加密数据使用本地化离线操作。",
+    secret: "加密密钥",
+    search: "查找关键字",
+    id: "ID",
+    account: "帐号",
   },
 };

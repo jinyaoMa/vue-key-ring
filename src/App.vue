@@ -1,6 +1,6 @@
 <template>
   <div id="view">
-    <router-view />
+    <router-view :secret="secret" @updateSecret="updateSecret" />
   </div>
   <div id="nav">
     <router-link to="/">
@@ -14,6 +14,27 @@
   </div>
 </template>
 
+<script>
+import { ref } from "@vue/reactivity";
+export default {
+  methods: {
+    updateSecret(newSecret) {
+      console.log("locked!");
+    },
+  },
+  setup() {
+    const secret = ref("jinyaoMa");
+
+    return {
+      secret,
+    };
+  },
+  mounted() {
+    console.log(this);
+  },
+};
+</script>
+
 <style lang="stylus">
 @import './main.styl'
 
@@ -24,11 +45,12 @@
   font-size var(--font-size)
   line-height var(--line-height)
   color var(--color-text)
-  a
+  a, input, button
     font-size var(--font-size)
     line-height var(--line-height)
     color var(--color-text)
     text-decoration none
+    outline none
 
 #nav
   position fixed
