@@ -45,7 +45,8 @@ export default {
   font-size var(--font-size)
   line-height var(--line-height)
   color var(--color-text)
-  a, input, button
+  a, input, button, textarea
+    font-family Avenir, Helvetica, Arial, sans-serif
     font-size var(--font-size)
     line-height var(--line-height)
     color var(--color-text)

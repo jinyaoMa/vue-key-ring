@@ -4,7 +4,14 @@
       <input type="text" v-model="keywords" :placeholder="$t('search')" />
     </div>
     <div class="panel">
-      <div class="panel-item add">
+      <div
+        class="panel-item add"
+        @click="
+          $router.push({
+            name: 'New',
+          })
+        "
+      >
         <i class="fas fa-plus" />
       </div>
       <div
@@ -104,15 +111,13 @@ $search-width = 747px
   flex-wrap wrap
   align-content flex-start
 
-$card-width = 320px
-
 .panel-item
   padding var(--padding-input)
   background-color var(--color-bg)
   border-radius var(--border-radius-l)
   box-shadow 0 0 0 var(--border-width) var(--color-gray)
   box-sizing border-box
-  max-width $card-width
+  max-width $input-width
   width 100%
   margin var(--margin-img)
   height calc(2 * var(--padding-input) + (2 * var(--font-size-s) + var(--font-size-m)) * var(--line-height) + var(--font-size-l) * var(--line-height-l))

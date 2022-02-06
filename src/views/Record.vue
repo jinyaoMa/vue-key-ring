@@ -1,8 +1,8 @@
 <template>
-  <div class="new">
+  <div class="record">
     <div class="form">
       <div class="form-item title">
-        {{ $t("addTitle") }}
+        {{ $t("keyTitle", { timestamp: $props.record.timestamp }) }}
       </div>
       <div class="form-item">
         <div class="form-item__label">{{ $t("alias") }}</div>
@@ -35,10 +35,7 @@
           :placeholder="$t('morePlaceholder')"
         ></textarea>
       </div>
-      <div class="form-item">
-        <button class="btn-confirm">{{ $t("confirm") }}</button>
-      </div>
-      <div class="form-item">
+      <div v-if="isNoChange" class="form-item">
         <button
           @click="
             $router.push({
@@ -46,9 +43,17 @@
             })
           "
         >
-          {{ $t("cancel") }}
+          {{ $t("goback") }}
         </button>
       </div>
+      <template v-else>
+        <div class="form-item">
+          <button class="btn-update">{{ $t("update") }}</button>
+        </div>
+        <div class="form-item">
+          <button class="btn-delete">{{ $t("delete") }}</button>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -56,13 +61,39 @@
 <script>
 import { ref } from "@vue/reactivity";
 export default {
-  name: "New",
-  setup() {
+  name: "Record",
+  props: {
+    record: {
+      type: Object,
+      default() {
+        return {
+          timestamp: Date.now().toString(),
+          alias: "",
+          account: "",
+          password: "",
+          more: "",
+        };
+      },
+    },
+  },
+  computed: {
+    isNoChange() {
+      const a = this.form;
+      const b = this.$props.record;
+      return (
+        a.alias == b.alias &&
+        a.account == b.account &&
+        a.password == b.password &&
+        a.more == b.more
+      );
+    },
+  },
+  setup(props) {
     const form = ref({
-      alias: "",
-      account: "",
-      password: "",
-      more: "",
+      alias: props.record.alias,
+      account: props.record.account,
+      password: props.record.password,
+      more: props.record.more,
     });
 
     return {
@@ -75,7 +106,7 @@ export default {
 <style lang="stylus" scoped>
 @import '../main.styl'
 
-.new
+.record
   display flex
   flex-direction column
   align-items center
@@ -134,7 +165,11 @@ export default {
   &.hasTextarea
     flex-grow 1
 
-.btn-confirm
+.btn-update
   background-color var(--color-text) !important
   color var(--color-text_o) !important
+
+.btn-delete
+  color var(--color-brown) !important
+  font-weight bold
 </style>

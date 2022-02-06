@@ -21,6 +21,10 @@
         <i v-else class="fas fa-lock-open" />
       </button>
     </div>
+    <div class="nightshift" @click="handleNightshift">
+      <i class="fas fa-sun" />
+      <i class="fas fa-moon" />
+    </div>
     <div class="version">{{ $t("version", { version: pkg.version }) }}</div>
   </div>
 </template>
@@ -42,6 +46,16 @@ export default {
       this.isLock = !this.isLock;
       if (this.isLock) {
         this.$emit("updateSecret", this.mySecret);
+      }
+    },
+    handleNightshift() {
+      let root = document.querySelector(":root");
+      if (root) {
+        if (root.classList.contains("dark")) {
+          root.classList.remove("dark");
+        } else {
+          root.classList.add("dark");
+        }
       }
     },
   },
@@ -69,6 +83,8 @@ export default {
   position relative
   flex-grow 1
   max-width 100%
+  box-sizing border-box
+  padding-bottom calc(var(--margin-img) + var(--font-size-m) * var(--line-height))
 
 $logo-size = 256px
 
@@ -86,15 +102,13 @@ $logo-size = 256px
 .by, .version
   color var(--color-text-l)
 
-.by, .intro
+.by, .intro, .secret
   margin-bottom var(--margin-gap)
 
 .version
   position absolute
   bottom 0
   font-size var(--font-size-m)
-
-$thumb-size = 40px
 
 .secret
   display flex
@@ -119,4 +133,24 @@ $thumb-size = 40px
     &:focus
       background-color var(--color-bg)
       box-shadow inset 0 0 0 var(--border-width) var(--color-gray)
+
+.nightshift
+  height $thumb-size
+  width: $thumb-size * 2
+  display flex
+  flex-direction row
+  align-items center
+  background-color var(--color-gray)
+  border-radius var(--border-radius)
+  overflow hidden
+  cursor pointer
+  @media (min-width $screen-tablet-size)
+    &:hover
+      box-shadow 0 0 var(--margin-gap) var(--color-text-l)
+  i
+    flex-grow 1
+    line-height $thumb-size
+    &:first-child
+      background-color var(--color-text)
+      color var(--color-text_o)
 </style>
