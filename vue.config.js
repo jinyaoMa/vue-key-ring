@@ -26,12 +26,13 @@ module.exports = {
   productionSourceMap: false,
   pwa: {
     name: "Key Ring",
-    themeColor: "#333333",
+    themeColor: "#4DBA87",
     msTileColor: "#000000",
     appleMobileWebAppCapable: "yes",
     appleMobileWebAppStatusBarStyle: "black",
     manifestOptions: {
       orientation: "portrait",
+      background_color: "#000000",
     },
   },
 };
