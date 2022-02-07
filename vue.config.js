@@ -32,16 +32,8 @@ module.exports = {
     appleMobileWebAppStatusBarStyle: "black",
     manifestOptions: {
       orientation: "portrait",
-      plus: {
-        statusbar: {
-          immersed: true,
-        },
-        launchwebview: {
-          statusbar: {
-            background: "#000000",
-          },
-        },
-      },
+      UIStatusBarStyle: "UIStatusBarStyleBlackOpaque",
+      StatusBarBackground: "#000000",
     },
   },
 };
