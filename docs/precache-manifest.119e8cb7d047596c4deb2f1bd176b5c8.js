@@ -84,7 +84,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/vue-key-ring/js/index.f697b9cb.js"
   },
   {
-    "revision": "9fe01391b7a16199a66e16820a6b875c",
+    "revision": "912048d0e42e062313a9db90617e30cb",
     "url": "/vue-key-ring/manifest.json"
   },
   {

@@ -31,9 +31,9 @@ module.exports = {
     appleMobileWebAppCapable: "yes",
     appleMobileWebAppStatusBarStyle: "black",
     manifestOptions: {
+      display: "minimal-ui",
+      background_color: "#FFFFFF",
       orientation: "portrait",
-      UIStatusBarStyle: "UIStatusBarStyleBlackOpaque",
-      StatusBarBackground: "#000000",
     },
   },
 };
