@@ -36,13 +36,18 @@
         ></textarea>
       </div>
       <div class="form-item">
-        <button class="btn-confirm">{{ $t("confirm") }}</button>
+        <button class="btn-confirm" @click="handleAddClick">
+          {{ $t("confirm") }}
+        </button>
       </div>
       <div class="form-item">
         <button
           @click="
             $router.push({
-              name: 'Home',
+              name: 'Keys',
+              params: {
+                pass: true,
+              },
             })
           "
         >
@@ -57,6 +62,28 @@
 import { ref } from "@vue/reactivity";
 export default {
   name: "New",
+  props: {
+    add: {
+      type: Function,
+    },
+  },
+  methods: {
+    handleAddClick() {
+      if (
+        this.$props.add({
+          timestamp: Date.now().toString(),
+          ...this.form,
+        })
+      ) {
+        this.$router.push({
+          name: "Keys",
+          params: {
+            pass: true,
+          },
+        });
+      }
+    },
+  },
   setup() {
     const form = ref({
       alias: "",

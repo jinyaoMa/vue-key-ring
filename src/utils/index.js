@@ -1,4 +1,4 @@
-export { KeyRing } from "./key-ring";
+export { keyring } from "./key-ring";
 
 export { ZH, EN, messages } from "./i18n";
 

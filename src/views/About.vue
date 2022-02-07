@@ -38,7 +38,7 @@ export default {
   name: "About",
   props: {
     secret: {
-      type: String,
+      type: Function,
     },
   },
   methods: {
@@ -53,14 +53,16 @@ export default {
       if (root) {
         if (root.classList.contains("dark")) {
           root.classList.remove("dark");
+          window.localStorage.setItem("skin", "light");
         } else {
           root.classList.add("dark");
+          window.localStorage.setItem("skin", "dark");
         }
       }
     },
   },
   setup(props) {
-    const mySecret = ref(props.secret);
+    const mySecret = ref(props.secret());
     const isLock = ref(true);
 
     return {

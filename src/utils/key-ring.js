@@ -1,7 +1,5 @@
-import crypto from "crypto";
+import { AES, enc, HmacSHA512 } from "crypto-js";
 
-const METHOD_CHECK = "sha256";
-const METHOD_LOAD = "sm4";
 const IV = Date.now().toString();
 const CONSOLE_SUCCESS_LABEL_STYLE =
   "background: #606060; color: #fff; border-radius: 3px 0 0 3px;";
@@ -13,78 +11,72 @@ const CONSOLE_FAILURE_INFO_STYLE =
   "background: #1475B2; color: #fff; border-radius: 0 3px 3px 0;";
 
 const Encrypt = (plainData, key) => {
-  const cipher = crypto.createCipheriv(METHOD_LOAD, key, IV);
-  let crypted = cipher.update(plainData, "utf-8", "hex");
-  crypted += cipher.final("hex");
-  return crypted;
+  const cipherparams = AES.encrypt(plainData, key, {
+    iv: IV,
+  });
+  return cipherparams.toString();
 };
 
 const Decrypt = (encryptedData, key) => {
-  const decipher = crypto.createDecipheriv(METHOD_LOAD, key, IV);
-  let decrypted = decipher.update(encryptedData, "hex", "utf-8");
-  decrypted += decipher.final("utf-8");
-  return decrypted;
+  const wordarray = AES.decrypt(encryptedData, key, {
+    iv: IV,
+  });
+  return wordarray.toString(enc.Utf8);
 };
 
-export class KeyRing {
-  constructor(
-    key = "jinyaoMa",
-    listeners = {
-      onChecked(ok) {
-        ok;
-      },
-      onLoaded(keysData = []) {},
-      onAdded(newKeyData = {}) {},
-      onRemoved(removedKeyData = {}, index) {},
-      onUpdated(updatedKeyData = {}, index) {},
-    }
-  ) {
-    this.__key__ = key;
-    this.__listeners__ = listeners;
-    this.storage = window.localStorage;
-    this.map = {};
-    this.list = [];
-
-    if (this.__listeners__.onChecked(this.__check__())) {
-      this.__load__();
-    }
+const Log = (label, msg, isError = false) => {
+  if (isError) {
+    console.error(
+      `%c ${label} %c ${msg} `,
+      CONSOLE_FAILURE_LABEL_STYLE,
+      CONSOLE_FAILURE_INFO_STYLE
+    );
+    return;
   }
+  console.info(
+    `%c ${label} %c ${msg} `,
+    CONSOLE_SUCCESS_LABEL_STYLE,
+    CONSOLE_SUCCESS_INFO_STYLE
+  );
+};
+const ChecksumKey = () => {
+  return window.btoa(window.location.host);
+};
 
-  __check__() {
-    const checksumKey = window.btoa(window.location.host);
-    const hmac = crypto.createHmac(METHOD_CHECK, this.__key__);
-    hmac.update(checksumKey);
-
-    const expectedCheckSum = hmac.digest("hex");
-    const checksumValue = this.storage.getItem(checksumKey);
-    let isKeyOk = false;
+export const keyring = {
+  initStorage(key) {
+    const checksumKey = ChecksumKey();
+    const checksumValue = window.localStorage.getItem(checksumKey);
     if (checksumValue == null) {
-      this.storage.clear();
-      this.storage.setItem(checksumKey, expectedCheckSum);
-      isKeyOk = true;
-    } else if (checksumValue === expectedCheckSum) {
-      isKeyOk = true;
-    }
-    if (isKeyOk) {
-      console.info(
-        `%c Key Check %c Pass`,
-        CONSOLE_SUCCESS_LABEL_STYLE,
-        CONSOLE_SUCCESS_INFO_STYLE
-      );
+      const expectedCheckSum = HmacSHA512(checksumKey, key).toString();
+      window.localStorage.clear();
+      window.localStorage.setItem(checksumKey, expectedCheckSum);
+      Log("Init Storage", "Setup");
     } else {
-      console.error(
-        `%c Key Check %c Fail`,
-        CONSOLE_FAILURE_LABEL_STYLE,
-        CONSOLE_FAILURE_INFO_STYLE
-      );
+      Log("Init Storage", "Ignore");
     }
-    return isKeyOk;
-  }
-
-  __load__() {
-    for (let i = 0; i < this.storage.length; i++) {
-      const dataKey = this.storage.key(i);
-      const timestamp = window.atob(dataKey);
+  },
+  checkKey(key) {
+    const checksumKey = ChecksumKey();
+    const expectedCheckSum = HmacSHA512(checksumKey, key).toString();
+    const checksumValue = window.localStorage.getItem(checksumKey);
+    if (checksumValue === expectedCheckSum) {
+      Log("Check Key", "Pass");
+      return true;
+    }
+    Log("Check Key", "Fail", true);
+    return false;
+  },
+  loadKeysData(key) {
+    const result = [];
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const dataKey = window.localStorage.key(i);
+      const timestamp = "";
+      try {
+        timestamp = window.atob(dataKey);
+      } catch (error) {
+        continue;
+      }
       if (
         timestamp === window.location.host ||
         timestamp.length === 0 ||
@@ -93,109 +85,68 @@ export class KeyRing {
         continue;
       }
       try {
-        this.map[timestamp] = JSON.parse(
-          Decrypt(this.storage.getItem(dataKey), this.__key__)
-        );
-        this.list.unshift({
+        result.unshift({
           timestamp,
-          ...this.map[timestamp],
+          ...JSON.parse(Decrypt(window.localStorage.getItem(dataKey), key)),
         });
       } catch (error) {
-        this.map = {};
-        this.list = [];
-        console.error(
-          `%c Loaded %c Fail`,
-          CONSOLE_FAILURE_LABEL_STYLE,
-          CONSOLE_FAILURE_INFO_STYLE
-        );
-        return;
+        Log("Load Keys Data", "Fail", true);
+        return [];
       }
     }
-
-    const newKeysData = this.list.sort((a, b) => {
-      return parseInt(b.timestamp) - parseInt(a.timestamp);
-    });
-    console.info(
-      `%c Loaded %c Pass`,
-      CONSOLE_SUCCESS_LABEL_STYLE,
-      CONSOLE_SUCCESS_INFO_STYLE
-    );
-    this.__listeners__.onLoaded(newKeysData);
-  }
-
-  add(
+    Log("Load Keys Data", "Pass");
+    return result;
+  },
+  addKeyData(
+    key,
     keyData = {
+      timestamp: "", // not null
       alias: "", // not null
       account: "", // not null
       password: "", // not null
       more: "", // not null
     }
   ) {
-    const timestamp = Date.now().toString();
-    this.map[timestamp] = keyData;
-    this.storage.setItem(
-      window.btoa(timestamp),
-      Encrypt(JSON.stringify(keyData), this.__key__)
+    window.localStorage.setItem(
+      window.btoa(keyData.timestamp),
+      Encrypt(
+        JSON.stringify({
+          alias: keyData.alias,
+          account: keyData.account,
+          password: keyData.password,
+          more: keyData.more,
+        }),
+        key
+      )
     );
-
-    const newKeyData = {
-      timestamp,
-      ...keyData,
-    };
-    this.list.unshift(newKeyData);
-    console.info(
-      `%c Added %c ${timestamp}`,
-      CONSOLE_SUCCESS_LABEL_STYLE,
-      CONSOLE_SUCCESS_INFO_STYLE
-    );
-    this.__listeners__.onAdded(newKeyData);
-  }
-
-  remove(timestamp) {
-    delete this.map[timestamp];
-    delete this.storage[window.btoa(timestamp)];
-
-    const targetIndex = this.list.findIndex((v) => {
-      return v.timestamp === timestamp;
-    });
-
-    this.__listeners__.onRemoved(this.list[targetIndex], targetIndex);
-    this.list = a.slice(0, targetIndex).concat(a.slice(targetIndex + 1));
-    console.info(
-      `%c Removed %c ${timestamp}`,
-      CONSOLE_SUCCESS_LABEL_STYLE,
-      CONSOLE_SUCCESS_INFO_STYLE
-    );
-  }
-
-  update(
-    timestamp,
+    Log("Add Key Data", keyData.timestamp);
+  },
+  deleteKeyData(timestamp) {
+    delete window.localStorage[window.btoa(timestamp)];
+    Log("Delete Key Data", timestamp);
+  },
+  updateKeyData(
+    key,
     newKeyData = {
+      timestamp: "", // not null
       alias: "", // not null
       account: "", // not null
       password: "", // not null
       more: "", // not null
     }
   ) {
-    this.map[timestamp] = newKeyData;
-    this.storage.setItem(
-      window.btoa(timestamp),
-      Encrypt(JSON.stringify(newKeyData), this.__key__)
+    window.localStorage.setItem(
+      window.btoa(newKeyData.timestamp),
+      Encrypt(
+        JSON.stringify({
+          alias: newKeyData.alias,
+          account: newKeyData.account,
+          password: newKeyData.password,
+          more: newKeyData.more,
+        }),
+        key
+      )
     );
-
-    const targetIndex = this.list.findIndex((v) => {
-      return v.timestamp === timestamp;
-    });
-
-    this.list[targetIndex] = {
-      ...this.list[targetIndex],
-      ...newKeyData,
-    };
-    console.info(
-      `%c Updated %c ${timestamp}`,
-      CONSOLE_SUCCESS_LABEL_STYLE,
-      CONSOLE_SUCCESS_INFO_STYLE
-    );
-    this.__listeners__.onUpdated(this.list[targetIndex], targetIndex);
-  }
-}
+    Log("Update Key Data", newKeyData.timestamp);
+  },
+};

@@ -4,14 +4,14 @@ export const ZH = "zh";
 export const messages = {
   [EN]: {
     appname: "Key Ring",
-    home: "Keys",
+    keys: "Keys",
     about: "About",
     by: "by {author}",
     version: "version {version}",
     intro:
       "A key ring application to store accounts and passwords. All operations are offline and stored data is encrypted.",
     secret: "Key for Encryption",
-    search: "Enter keywords to filter...",
+    search: "Enter keywords to filter ...",
     id: "ID",
     account: "Account",
     accountPlaceholder: "Account or Username",
@@ -28,10 +28,12 @@ export const messages = {
     update: "Update",
     delete: "Delete",
     goback: "Go Back",
+    entry: "Secret Key (default: {key})",
+    emptyData: "[No {placeholder}]",
   },
   [ZH]: {
     appname: "耀匙扣",
-    home: "钥匙库",
+    keys: "钥匙库",
     about: "关于",
     by: "由 {author} 制作",
     version: "版本号 {version}",
@@ -55,5 +57,7 @@ export const messages = {
     update: "更新",
     delete: "删除",
     goback: "返回",
+    entry: "加密密钥 (默认: {key})",
+    emptyData: "[ 无{placeholder} ]",
   },
 };

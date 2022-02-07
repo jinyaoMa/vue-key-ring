@@ -1,13 +1,35 @@
 <template>
   <div id="view">
-    <router-view :secret="secret" @updateSecret="updateSecret" />
+    <router-view
+      :keysData="keysData"
+      @enterApp="enterApp"
+      :add="addFunc"
+      :update="updateFunc"
+      :delete="deleteFunc"
+      @updateSecret="updateSecret"
+      :secret="secretFunc"
+    />
   </div>
-  <div id="nav">
-    <router-link to="/">
+  <div v-if="$route.name != 'Home'" id="nav">
+    <router-link
+      :to="{
+        name: 'Keys',
+        params: {
+          pass: true,
+        },
+      }"
+    >
       <i class="fas fa-key" />
-      <span>{{ $t("home") }}</span>
+      <span>{{ $t("keys") }}</span>
     </router-link>
-    <router-link to="/about">
+    <router-link
+      :to="{
+        name: 'About',
+        params: {
+          pass: true,
+        },
+      }"
+    >
       <i class="fas fa-info-circle" />
       <span>{{ $t("about") }}</span>
     </router-link>
@@ -16,16 +38,59 @@
 
 <script>
 import { ref } from "@vue/reactivity";
+import pkg from "@pkg";
+import { keyring } from "./utils";
+
 export default {
   methods: {
+    enterApp(secret, error) {
+      if (keyring.checkKey(secret)) {
+        this.keysData = keyring.loadKeysData(secret);
+        this.$router.push({
+          name: "Keys",
+          params: {
+            pass: true,
+          },
+        });
+      } else {
+        error();
+      }
+    },
+    addFunc(newKeyData) {
+      this.keysData.unshift(newKeyData);
+      keyring.addKeyData(this.secret, newKeyData);
+      return true;
+    },
+    updateFunc(id, newKeyData) {
+      this.keysData[id] = newKeyData;
+      keyring.updateKeyData(this.secret, newKeyData);
+      return true;
+    },
+    deleteFunc(id, timestamp) {
+      delete this.keysData[id];
+      keyring.deleteKeyData(timestamp);
+      return true;
+    },
+    // undo
     updateSecret(newSecret) {
       console.log("locked!");
     },
+    secretFunc() {
+      return this.secret;
+    },
   },
   setup() {
-    const secret = ref("jinyaoMa");
+    const keysData = ref([]);
+    const secret = ref(pkg.author);
+    keyring.initStorage(secret.value);
+
+    const skin = window.localStorage.getItem("skin");
+    if (skin) {
+      document.querySelector(":root").classList.add(skin);
+    }
 
     return {
+      keysData,
       secret,
     };
   },
@@ -78,7 +143,7 @@ export default {
     i
       font-size var(--font-size-l)
       margin-bottom var(--padding-btn)
-    &.router-link-exact-active
+    &.router-link-active
       color var(--color-text)
 
 #view

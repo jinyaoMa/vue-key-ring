@@ -2,7 +2,7 @@
   <div class="record">
     <div class="form">
       <div class="form-item title">
-        {{ $t("keyTitle", { timestamp: $props.record.timestamp }) }}
+        {{ $t("keyTitle", { timestamp: form.timestamp }) }}
       </div>
       <div class="form-item">
         <div class="form-item__label">{{ $t("alias") }}</div>
@@ -36,24 +36,29 @@
         ></textarea>
       </div>
       <div v-if="isNoChange" class="form-item">
+        <button class="btn-delete" @click="handleDeleteClick">
+          {{ $t("delete") }}
+        </button>
+      </div>
+      <div v-else class="form-item">
+        <button class="btn-update" @click="handleUpdateClick">
+          {{ $t("update") }}
+        </button>
+      </div>
+      <div class="form-item">
         <button
           @click="
             $router.push({
-              name: 'Home',
+              name: 'Keys',
+              params: {
+                pass: true,
+              },
             })
           "
         >
           {{ $t("goback") }}
         </button>
       </div>
-      <template v-else>
-        <div class="form-item">
-          <button class="btn-update">{{ $t("update") }}</button>
-        </div>
-        <div class="form-item">
-          <button class="btn-delete">{{ $t("delete") }}</button>
-        </div>
-      </template>
     </div>
   </div>
 </template>
@@ -63,23 +68,41 @@ import { ref } from "@vue/reactivity";
 export default {
   name: "Record",
   props: {
-    record: {
-      type: Object,
+    id: {
+      type: Number,
+    },
+    update: {
+      type: Function,
+    },
+    delete: {
+      type: Function,
+    },
+    keysData: {
+      type: Array,
       default() {
-        return {
-          timestamp: Date.now().toString(),
-          alias: "",
-          account: "",
-          password: "",
-          more: "",
-        };
+        return [
+          /*
+          {
+            timestamp: "",
+            alias: "",
+            account: "",
+            password: "",
+            more: "",
+          },
+          */
+        ];
       },
     },
   },
   computed: {
     isNoChange() {
       const a = this.form;
-      const b = this.$props.record;
+      const b = this.$props.keysData[this.$props.id] || {
+        alias: "",
+        account: "",
+        password: "",
+        more: "",
+      };
       return (
         a.alias == b.alias &&
         a.account == b.account &&
@@ -88,13 +111,30 @@ export default {
       );
     },
   },
+  methods: {
+    handleUpdateClick() {
+      if (this.$props.update(this.$props.id, this.form)) {
+        this.$router.push({
+          name: "Keys",
+          params: {
+            pass: true,
+          },
+        });
+      }
+    },
+    handleDeleteClick() {
+      if (this.$props.delete(this.$props.id, this.form.timestamp)) {
+        this.$router.push({
+          name: "Keys",
+          params: {
+            pass: true,
+          },
+        });
+      }
+    },
+  },
   setup(props) {
-    const form = ref({
-      alias: props.record.alias,
-      account: props.record.account,
-      password: props.record.password,
-      more: props.record.more,
-    });
+    const form = ref({ ...props.keysData[props.id] });
 
     return {
       form,
@@ -170,6 +210,7 @@ export default {
   color var(--color-text_o) !important
 
 .btn-delete
-  color var(--color-brown) !important
+  background-color var(--color-brown) !important
+  color var(--color-text_o) !important
   font-weight bold
 </style>
