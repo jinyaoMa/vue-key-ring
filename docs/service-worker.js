@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/vue-key-ring/precache-manifest.63fa104febb2d243dcec6295215fc813.js"
+  "/vue-key-ring/precache-manifest.7d9d7ab3c15d5abcdbc88ea31b808a7a.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "vue-key-ring"});

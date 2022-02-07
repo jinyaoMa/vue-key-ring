@@ -4,6 +4,7 @@ import Keys from "../views/Keys.vue";
 import About from "../views/About.vue";
 import New from "../views/New.vue";
 import Record from "../views/Record.vue";
+import { messages, ZH, EN, isChinese } from "../utils";
 
 const routes = [
   {
@@ -55,7 +56,11 @@ const router = createRouter({
   routes,
 });
 
+const strings = messages[isChinese() ? ZH : EN];
 router.beforeEach((to, from, next) => {
+  if (strings) {
+    document.title = strings.appname;
+  }
   if (to.meta.auth) {
     if (!to.params.pass) {
       next("/");
