@@ -1,6 +1,6 @@
 {
   "name": "vue-key-ring",
-  "version": "1.0.0-20220207.1130",
+  "version": "1.0.0-20220207.1254",
   "description": "A key ring application to store accounts and passwords. All operations are offline and stored data is encrypted.",
   "author": "jinyaoMa",
   "license": "MIT",

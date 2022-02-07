@@ -4,7 +4,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/vue-key-ring/css/chunk-vendors.198fd3d3.css"
   },
   {
-    "revision": "e72858fbabd881827a1c",
+    "revision": "8cc432734a270d52af53",
     "url": "/vue-key-ring/css/index.85b40a42.css"
   },
   {
@@ -72,7 +72,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/vue-key-ring/img/logo.5927c0ad.png"
   },
   {
-    "revision": "271e6aa31263a5ad324eb8815502883a",
+    "revision": "03ab18de0bb805c0db18d53a46fbd582",
     "url": "/vue-key-ring/index.html"
   },
   {
@@ -80,11 +80,11 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/vue-key-ring/js/chunk-vendors.30abacf0.js"
   },
   {
-    "revision": "e72858fbabd881827a1c",
-    "url": "/vue-key-ring/js/index.f697b9cb.js"
+    "revision": "8cc432734a270d52af53",
+    "url": "/vue-key-ring/js/index.64a7f7a0.js"
   },
   {
-    "revision": "912048d0e42e062313a9db90617e30cb",
+    "revision": "82f3e554a909983bce6013eabdaf6f6f",
     "url": "/vue-key-ring/manifest.json"
   },
   {
