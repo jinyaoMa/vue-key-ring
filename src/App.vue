@@ -137,9 +137,6 @@ export default {
       secret,
     };
   },
-  mounted() {
-    console.log(this);
-  },
 };
 </script>
 
