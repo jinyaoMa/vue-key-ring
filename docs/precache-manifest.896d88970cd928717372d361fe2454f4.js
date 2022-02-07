@@ -72,7 +72,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/vue-key-ring/img/logo.5927c0ad.png"
   },
   {
-    "revision": "14380509352efdbf017d44296dfd84f1",
+    "revision": "271e6aa31263a5ad324eb8815502883a",
     "url": "/vue-key-ring/index.html"
   },
   {
@@ -84,7 +84,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/vue-key-ring/js/index.f697b9cb.js"
   },
   {
-    "revision": "09682f5aeef23bf12f3c407775195748",
+    "revision": "32456635c51b0557b46a717e0c630f84",
     "url": "/vue-key-ring/manifest.json"
   },
   {

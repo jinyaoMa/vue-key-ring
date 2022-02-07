@@ -25,14 +25,23 @@ module.exports = {
   },
   productionSourceMap: false,
   pwa: {
-    name: "Key Ring",
+    name: "KeyringApp",
     themeColor: "#4DBA87",
     msTileColor: "#000000",
     appleMobileWebAppCapable: "yes",
     appleMobileWebAppStatusBarStyle: "black",
     manifestOptions: {
       orientation: "portrait",
-      background_color: "#000000",
+      plus: {
+        statusbar: {
+          immersed: true,
+        },
+        launchwebview: {
+          statusbar: {
+            background: "#000000",
+          },
+        },
+      },
     },
   },
 };
