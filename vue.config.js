@@ -9,7 +9,7 @@ function resolve(dir) {
 
 module.exports = {
   publicPath: process.env.NODE_ENV === "production" ? "/vue-key-ring/" : "/",
-  outputDir: "dist",
+  outputDir: "docs",
   assetsDir: "",
   indexPath: "index.html",
   pages: {
