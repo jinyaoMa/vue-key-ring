@@ -67,6 +67,57 @@ export const keyring = {
     Log("Check Key", "Fail", true);
     return false;
   },
+  saveKeysData(newKey, keysData = []) {
+    const checksumKey = ChecksumKey();
+    const expectedCheckSum = HmacSHA512(checksumKey, newKey).toString();
+    window.localStorage.setItem(checksumKey, expectedCheckSum);
+    keysData.forEach((keyData) => {
+      const timestamp = window.btoa(keyData.timestamp);
+      window.localStorage.setItem(
+        timestamp,
+        Encrypt(
+          JSON.stringify({
+            alias: keyData.alias,
+            account: keyData.account,
+            password: keyData.password,
+            more: keyData.more,
+          }),
+          newKey
+        )
+      );
+    });
+    Log("Save Keys Data", "Pass");
+  },
+  importKeysData(load = (keysData) => {}) {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/json";
+    input.onchange = () => {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          if (load(this.result)) {
+            Log("Import Keys Data", "Pass");
+          } else {
+            Log("Import Keys Data", "Fail", true);
+          }
+        };
+        reader.readAsBinaryString(input.files[0]);
+      }
+      input.remove();
+    };
+    input.click();
+  },
+  exportKeysData(keysData = []) {
+    const urlObject = window.URL || window.webkitURL || window;
+    const blob = new Blob([JSON.stringify(keysData, null, 2)]);
+    const a = document.createElement("a");
+    a.download = "keyring.json";
+    a.href = urlObject.createObjectURL(blob);
+    a.click();
+    a.remove();
+    Log("Export Keys Data", "Download");
+  },
   loadKeysData(key) {
     const result = [];
     for (let i = 0; i < window.localStorage.length; i++) {

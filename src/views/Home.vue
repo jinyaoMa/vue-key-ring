@@ -53,11 +53,12 @@ export default {
 .home
   display flex
   flex-direction column
-  justify-content center
   align-items center
   position relative
   flex-grow 1
   max-width 100%
+  @media (min-width $screen-phone-size)
+    justify-content center
 
 .entry
   display flex

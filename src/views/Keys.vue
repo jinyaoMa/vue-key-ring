@@ -19,14 +19,14 @@
       </div>
       <div
         class="panel-item"
-        v-for="(keyData, id) in targetKeysData"
+        v-for="(keyData, i) in targetKeysData"
         :key="keyData.timestamp"
         @click="
           $router.push({
             name: 'Record',
             params: {
               pass: true,
-              id,
+              id: i,
             },
           })
         "
@@ -113,6 +113,7 @@ $search-width = 747px
   width $search-width
   max-width 100%
   margin-bottom var(--margin-img)
+  height $thumb-size
   input
     border none
     background-color var(--color-gray)

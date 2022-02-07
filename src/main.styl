@@ -40,11 +40,21 @@ $thumb-size = 40px
   --color-bg #ffffff
   --color-brown brown
   --color-brown-l #ffcccc
+  &.dark
+    --color-text #cccccc
+    --color-text-p #999999
+    --color-text-l #666666
+    --color-text_o #000000
+    --color-gray #333333
+    --color-bg #000000
+    --color-brown brown
+    --color-brown-l #330000
 
 body
   margin 0
   overflow-x hidden
   overflow-y scroll
+  background-color var(--color-bg)
 
 div, a, button, input, img
   transition 0.2s

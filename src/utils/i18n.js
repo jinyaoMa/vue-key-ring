@@ -30,6 +30,8 @@ export const messages = {
     goback: "Go Back",
     entry: "Secret Key (default: {key})",
     emptyData: "[No {placeholder}]",
+    import: "Import",
+    export: "Export",
   },
   [ZH]: {
     appname: "耀匙扣",
@@ -59,5 +61,7 @@ export const messages = {
     goback: "返回",
     entry: "加密密钥 (默认: {key})",
     emptyData: "[ 无{placeholder} ]",
+    import: "导入",
+    export: "导出",
   },
 };

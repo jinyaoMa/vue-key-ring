@@ -21,9 +21,17 @@
         <i v-else class="fas fa-lock-open" />
       </button>
     </div>
-    <div class="nightshift" @click="handleNightshift">
-      <i class="fas fa-sun" />
-      <i class="fas fa-moon" />
+    <div class="options">
+      <div class="import" @click="handleImportClick">
+        {{ $t("import") }}
+      </div>
+      <div class="nightshift" @click="handleNightshift">
+        <i class="fas fa-sun" />
+        <i class="fas fa-moon" />
+      </div>
+      <div class="export" @click="handleExportClick">
+        {{ $t("export") }}
+      </div>
     </div>
     <div class="version">{{ $t("version", { version: pkg.version }) }}</div>
   </div>
@@ -44,9 +52,15 @@ export default {
   methods: {
     handleLockClick() {
       this.isLock = !this.isLock;
-      if (this.isLock) {
+      if (this.isLock && this.$props.secret() != this.mySecret) {
         this.$emit("updateSecret", this.mySecret);
       }
+    },
+    handleImportClick() {
+      this.$emit("importKeysData");
+    },
+    handleExportClick() {
+      this.$emit("exportKeysData");
     },
     handleNightshift() {
       let root = document.querySelector(":root");
@@ -136,23 +150,45 @@ $logo-size = 256px
       background-color var(--color-bg)
       box-shadow inset 0 0 0 var(--border-width) var(--color-gray)
 
-.nightshift
+.options
+  display flex
+  flex-direction row
+
+.nightshift, .import, .export
   height $thumb-size
   width: $thumb-size * 2
   display flex
   flex-direction row
   align-items center
+  justify-content center
   background-color var(--color-gray)
   border-radius var(--border-radius)
-  overflow hidden
   cursor pointer
   @media (min-width $screen-tablet-size)
     &:hover
       box-shadow 0 0 var(--margin-gap) var(--color-text-l)
+
+.import, .export
+  font-weight bold
+
+.nightshift
+  margin 0 var(--margin-gap)
+  overflow hidden
   i
     flex-grow 1
     line-height $thumb-size
-    &:first-child
-      background-color var(--color-text)
-      color var(--color-text_o)
+
+:root
+  &:not(.dark)
+    .nightshift
+      i
+        &:first-child
+          background-color var(--color-text)
+          color var(--color-text_o)
+  &.dark
+    .nightshift
+      i
+        &:last-child
+          background-color var(--color-text)
+          color var(--color-text_o)
 </style>

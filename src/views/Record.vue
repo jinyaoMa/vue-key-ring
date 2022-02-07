@@ -134,7 +134,9 @@ export default {
     },
   },
   setup(props) {
-    const form = ref({ ...props.keysData[props.id] });
+    const form = ref({
+      ...props.keysData[props.id],
+    });
 
     return {
       form,

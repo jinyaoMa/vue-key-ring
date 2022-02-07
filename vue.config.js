@@ -8,7 +8,7 @@ function resolve(dir) {
 }
 
 module.exports = {
-  publicPath: "/",
+  publicPath: process.env.NODE_ENV === "production" ? "/vue-key-ring/" : "/",
   outputDir: "dist",
   assetsDir: "",
   indexPath: "index.html",
@@ -24,4 +24,14 @@ module.exports = {
     config.resolve.alias.set("@pkg", resolve("./package.json"));
   },
   productionSourceMap: false,
+  pwa: {
+    name: "Key Ring",
+    themeColor: "#333333",
+    msTileColor: "#000000",
+    appleMobileWebAppCapable: "yes",
+    appleMobileWebAppStatusBarStyle: "black",
+    manifestOptions: {
+      orientation: "portrait",
+    },
+  },
 };

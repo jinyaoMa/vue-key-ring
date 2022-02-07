@@ -6,8 +6,10 @@
       :add="addFunc"
       :update="updateFunc"
       :delete="deleteFunc"
-      @updateSecret="updateSecret"
       :secret="secretFunc"
+      @updateSecret="updateSecret"
+      @exportKeysData="exportKeysData"
+      @importKeysData="importKeysData"
     />
   </div>
   <div v-if="$route.name != 'Home'" id="nav">
@@ -45,7 +47,11 @@ export default {
   methods: {
     enterApp(secret, error) {
       if (keyring.checkKey(secret)) {
+        this.secret = secret;
         this.keysData = keyring.loadKeysData(secret);
+        this.keysData.sort((a, b) => {
+          return parseInt(b.timestamp) - parseInt(a.timestamp);
+        });
         this.$router.push({
           name: "Keys",
           params: {
@@ -61,22 +67,59 @@ export default {
       keyring.addKeyData(this.secret, newKeyData);
       return true;
     },
-    updateFunc(id, newKeyData) {
-      this.keysData[id] = newKeyData;
+    updateFunc(index, newKeyData) {
+      this.keysData[index] = newKeyData;
       keyring.updateKeyData(this.secret, newKeyData);
       return true;
     },
-    deleteFunc(id, timestamp) {
-      delete this.keysData[id];
+    deleteFunc(index, timestamp) {
+      this.keysData.splice(index, 1);
       keyring.deleteKeyData(timestamp);
       return true;
     },
-    // undo
-    updateSecret(newSecret) {
-      console.log("locked!");
-    },
     secretFunc() {
       return this.secret;
+    },
+    updateSecret(newSecret) {
+      this.secret = newSecret;
+      keyring.saveKeysData(newSecret, this.keysData);
+    },
+    exportKeysData() {
+      keyring.exportKeysData(this.keysData);
+    },
+    importKeysData() {
+      keyring.importKeysData((data) => {
+        let success = true;
+        try {
+          const newKeysData = JSON.parse(data);
+          keyring.saveKeysData(this.secret, newKeysData);
+          newKeysData.forEach((keyData) => {
+            const i = this.keysData.findIndex(
+              (k) => k.timestamp == keyData.timestamp
+            );
+            if (i >= 0) {
+              this.keysData[i] = {
+                ...this.keysData[i],
+                ...keyData,
+              };
+            } else {
+              this.keysData.unshift(keyData);
+            }
+          });
+          this.keysData.sort((a, b) => {
+            return parseInt(b.timestamp) - parseInt(a.timestamp);
+          });
+          this.$router.push({
+            name: "Keys",
+            params: {
+              pass: true,
+            },
+          });
+        } catch (error) {
+          success = false;
+        }
+        return success;
+      });
     },
   },
   setup() {
